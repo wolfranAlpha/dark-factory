@@ -108,7 +108,7 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 
 ### M0.3 Manual agent loop, labels and work log (#4, PR #22)
 
-- **Date:** pending
+- **Date:** 2026-10-15
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
 - **Reviewer:** NVIDIA `Nemotron 3 Nano Omni` (free), [review](https://github.com/wolfranAlpha/dark-factory/pull/22#issuecomment-6194862687). Verdict: none given; read as `changes`
 - **Review rounds:** 1
