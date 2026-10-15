@@ -46,7 +46,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    **Temporary exception: same-vendor automatic review (plan D15).** Until M0.5 is merged, the review is by default a same-vendor automatic review. Its procedure replaces the owner's hand-off, posting and triage of findings above. The owner can ask for a cross-vendor review on any PR. The owner connects to OpenRouter during the M0.5 model research, so the M0.5 PR is the last one that may use the exception. That PR removes the exception from this file and from CLAUDE.md, and records the ending in M0.5's log entry. While the exception applies, the review runs like the factory's automatic review:
    - **Fresh reviewer.** The implementer launches a **new subagent with fresh context** as reviewer, never the session that wrote the code. The reviewer gets the suggested reviewer prompt below, used as-is. Its inputs are:
      - the issue (or, for a PR with no issue, its Workflow change entry);
-     - the plan step (or, for a Workflow change, the plan decision it records, if any);
+     - the plan step (or, for a Workflow change, the plan decision it records, if any; "none" for an issue with no plan step);
      - the PR title and body;
      - the diff;
      - read access to the repo.
@@ -66,7 +66,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    - **Minor findings accepted:** the accepted ones are applied and **one confirm round** follows. If the confirm round approves, the PR is ready. Its minor findings are not applied in this PR: they go to a follow-up issue, or are dropped with a reason posted on the PR. If it returns `changes` or `reject`, the owner decides.
    - **A non-minor finding:** in any round, including the confirm round, a finding not marked minor that comes with an `approve` goes to the owner, who decides what to do with it and how the review continues.
 
-   The confirm round is outside the 3-round budget, which counts rounds until the first `approve`, so a confirm round also follows an `approve` in round 3. There is at most one confirm round; any round after it is the owner's call.
+   The confirm round is outside the 3-round budget, which counts rounds until the first `approve`, so an `approve` in round 3 with accepted minor findings still gets its confirm round. There is at most one confirm round; any round after it is the owner's call.
 
    **Bookkeeping exemption.** A last commit that only fills in the log entry's review fields (round links and verdicts, the round count, the Date) needs no new review round.
 7. **Owner merges.** Squash merge; the PR title becomes the commit on `main`, and the branch is deleted automatically.
@@ -88,7 +88,7 @@ messages; judge the current state on its own. Return only the review, as markdow
 minor ones marked "(minor)".
 ---
 <issue body, or the Workflow change entry if there is no issue>
-<plan step, or the plan decision for a Workflow change>
+<plan step, the plan decision for a Workflow change, or "none">
 <PR title and body>
 <diff>
 ```
@@ -111,14 +111,16 @@ One entry per issue or Workflow change, appended at the end of the log in merge 
 - **Routing changes:** changes to `routing.yaml` and why, or "none"
 ```
 
+An issue with no plan step drops the step from the heading: `### <title> (#<issue>, PR #<pr>)`.
+
 With several review rounds, list each round's review link and verdict. The final values go in with the bookkeeping commit (step 6), after the last review.
 
 Under the temporary exception in step 5, and only then, the Reviewer line also carries the marker `[same-vendor, fresh session]` after the model.
 
-A change to this workflow that is not a plan step gets a **Workflow change** entry instead. When the change has an issue, its heading ends with `(#<issue>, PR #<pr>)`:
+A change to this workflow that is not a plan step gets a **Workflow change** entry instead. With no issue, its heading ends with `(PR #<pr>)`:
 
 ```markdown
-### Workflow change: <summary> (PR #<pr>)
+### Workflow change: <summary> (#<issue>, PR #<pr>)
 
 - **Date:** as in an issue entry
 - **Change:** what the loop now does differently
@@ -180,7 +182,7 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 ### Workflow change: same-vendor automatic review until M0.5 (PR #23)
 
 - **Date:** 2026-10-15
-- **Change:** until M0.5 is merged, the manual loop's review is by default a same-vendor review (plan D15). It runs as an automatic review: a fresh-context reviewer subagent, the review posted verbatim on the PR, the implementer applying findings and re-reviewing for up to 3 rounds, with the owner able to override. The factory keeps its cross-vendor rule. The PR also made permanent changes to the loop, for every PR: one confirm round after an `approve` with accepted minor findings, and the bookkeeping exemption (step 6); the branch, title and body conventions for a Workflow change with no issue (steps 2 and 3); and the Workflow change entry template, with each review round's link and verdict listed in the log entry
+- **Change:** until M0.5 is merged, the manual loop's review is by default a same-vendor review (plan D15). It runs as an automatic review: a fresh-context reviewer subagent, the review posted verbatim on the PR, the implementer applying findings and re-reviewing for up to 3 rounds, with the owner able to override. The factory keeps its cross-vendor rule. The PR also made permanent changes to the loop, for every PR: one confirm round after an `approve` with accepted minor findings, and the bookkeeping exemption (step 6); the branch, title and body conventions for a Workflow change with no issue (steps 2 and 3); the Workflow change entry template, with each review round's link and verdict listed in the log entry, and the Date set in the last commit before merge; and the reviewer prompt's reviewer rules, its return format with minor findings marked, and the PR title and body as a reviewer input
 - **Reason:** owner decision. Without an OpenRouter account, the free cross-vendor models are cumbersome to use and too weak: on M0.3, NVIDIA Nemotron 3 Nano Omni gave no verdict and made an incorrect claim. The owner connects to OpenRouter during the M0.5 model research, which ends the exception
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
 - **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200947695), verdict `changes`; findings applied apart from editing the M0.5 issue, which was left to the owner; on the owner's request, issue #6 was later updated to match the plan. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200986346), verdict `changes`; all 8 findings applied. The budget of 3 ran out without an `approve`. The owner extended it by up to 5 rounds, stopping at the first `approve`, to find out how many rounds a change like this needs. Round 4: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201068125), verdict `approve`, with 5 minor findings; findings 1 to 4 applied, 5 (informational) not applied. Round 5, requested by the owner after issue #6 was updated: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201219105), verdict `approve`, with 7 minor findings, all applied. Round 6, run because changes followed round 5: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201264682), verdict `approve`, with 4 minor findings, all applied. Round 7: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201290787), verdict `approve`, with 6 minor findings; 5 applied, and finding 2 (fill in the final rounds before merge) not applied, because any later commit would need yet another round. Round 8, the last of the extended budget: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201316620), verdict `approve`, with 5 minor findings. The owner went through them and accepted all 5. Findings 2 and 3 (no limit on rounds after an approve; the log never holding the final count) led to two new owner rules in step 6: one confirm round after an approve, and the bookkeeping exemption. Round 9, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201392460), verdict `approve`, with 4 minor findings. Under the new rule they were not applied here: finding 1 (a wrong step number in the PR description) was fixed in the description, and findings 2 to 4 went to follow-up issue #24
@@ -194,8 +196,8 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 ### Workflow change: post-approve review rules (#24, PR #25)
 
 - **Date:** pending
-- **Change:** step 6 now covers every outcome of an `approve`. If no findings are accepted, the PR is ready without a confirm round. A non-minor finding that comes with an `approve` goes to the owner. The confirm round is outside the 3-round budget, and at most one runs. Steps 2 and 3, the log format and CLAUDE.md now cover an issue with no plan step: branch `<type>/<slug>`, no step suffix in the title, `Closes #<n>` kept, and a Workflow change entry headed `(#<issue>, PR #<pr>)` when the change is to this workflow. The PR #23 entry now lists the permanent loop changes that PR made, and the reviewer prompt is re-wrapped to one width with its wording unchanged
-- **Reason:** follow-up to the round 9 confirm review on PR #23 (findings 2 to 4), moved to issue #24 under the step 6 rule. Owner decisions: the confirm round is outside the budget, and the naming for an issue with no plan step
+- **Change:** step 6 now covers every outcome of an `approve`. If no findings are accepted, the PR is ready without a confirm round. A non-minor finding that comes with an `approve` goes to the owner. The confirm round is outside the 3-round budget, and at most one runs. Steps 2 and 3, the log format and CLAUDE.md now cover an issue with no plan step: branch `<type>/<slug>`, no step suffix in the title, `Closes #<n>` kept, a log heading without the step (a Workflow change entry when the change is to this workflow), and "none" as the plan-step reviewer input. The PR #23 entry now lists the permanent loop changes that PR made, and the reviewer prompt is re-wrapped to one width with its wording unchanged
+- **Reason:** follow-up to the round 9 confirm review on PR #23 (findings 2 to 4), moved to issue #24 under the step 6 rule. Owner decisions: the confirm round is outside the budget, the naming for an issue with no plan step, and, from round 1 finding 2, its log heading and reviewer input
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
 - **Reviewer:** pending
 - **Review rounds:** pending
