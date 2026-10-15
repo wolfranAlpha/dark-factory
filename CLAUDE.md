@@ -2,96 +2,49 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Status
+
+M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D1 to D13). Read the relevant section before implementing anything.
+
+Toolchain (PRD 5.7): Python 3.12, `temporalio`, `pydantic`, `httpx`, `pyyaml`; ruff, mypy (strict), pytest with `pytest-asyncio`, `respx` and the Temporal test environment (time skipping). Later: Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
+
 ## Setup
 
-- Virtual environment: `source .venv/bin/activate` (always activate before running commands)
-- Install deps: `pip install -e ".[dev]"`
-- Environment variables: copy `.env.example` to `.env` for local development
+- Create the venv with Python 3.12: `py -3.12 -m venv .venv` (Windows) or `python3.12 -m venv .venv`
+- Activate it before running anything: `.venv\Scripts\activate` (Windows) or `source .venv/bin/activate` (Linux/macOS, Git Bash: `source .venv/Scripts/activate`)
+- Install: `pip install -e ".[dev]"`
+- Copy `.env.example` to `.env` for local development. `.env` is git-ignored
 
 ## Commands
 
 - `pytest` — run all tests
-- `pytest tests/test_items.py::test_create_item -v` — run a single test
-- `pytest --cov=src --cov-report=term-missing` — run tests with coverage
+- `pytest tests/test_package.py::test_version_matches_installed_metadata -v` — run a single test
 - `ruff check .` — lint
-- `ruff format .` — format code
-- `mypy src/` — type checking
-- `uvicorn src.main:app --reload` — start dev server
+- `ruff format .` — format
+- `mypy src/` — type check (strict)
 
-Run `ruff check . && mypy src/` before committing.
+Full check, required before every commit (and what CI runs from M0.2):
 
-## Project Structure
-
-- `src/` — application source code
-- `tests/` — mirrors src/ structure: `tests/test_routers/`, `tests/test_services/`, etc.
-
-structure to be updated after planning.
-
-
-## Coding Conventions
-
-- Type hints on all function signatures — parameters and return types
-- Use `from __future__ import annotations` at the top of every module
-- Pydantic models for all API input/output — never pass raw dicts across boundaries
-- Use `pathlib.Path` instead of `os.path`
-- f-strings for string formatting (no .format() or % formatting)
-- Docstrings on public functions using Google style
-
-```python
-def get_item(item_id: int, db: Session) -> Item:
-    """Fetch a single item by ID.
-
-    Args:
-        item_id: The item's primary key.
-        db: Database session.
-
-    Returns:
-        The matching Item.
-
-    Raises:
-        NotFoundError: If no item matches the ID.
-    """
+```
+ruff check . && ruff format --check . && mypy src/ && pytest
 ```
 
-## Testing
+## Project structure
 
-- Use pytest with fixtures defined in `conftest.py`
-- Test database: use an in-memory SQLite or test-specific PostgreSQL database — never touch the dev database
-- Use `httpx.AsyncClient` with `app` for API integration tests
-- Factory fixtures for creating test data (see `tests/factories.py`)
-- Aim for >80% coverage on business logic in `src/services/`
+- `src/dark_factory/` — the single import root. Subpackages are added as steps need them (plan D1): `config`, `ingress`, `workflows`, `activities`, `github`, `llm`, `sandbox`, `policy`, `telemetry`, `storage`
+- `tests/` — mirrors the package: `tests/test_config/`, `tests/test_workflows/`, etc.
+- `docs/plan.md` — development plan; `PRD.md` — requirements
 
-## Database
+## Coding conventions
 
-- SQLAlchemy 2.0 style (use `select()` not `session.query()`)
-- All schema changes go through Alembic migrations — never modify tables manually
-- New migration: `alembic revision --autogenerate -m "description"`
-- Apply migrations: `alembic upgrade head`
-
-## Error Handling
-
-- Use custom exception classes in `src/exceptions.py`
-- Routers should not catch generic exceptions — let the global exception handler deal with unexpected errors
-- Service layer raises domain exceptions (NotFoundError, ValidationError, etc.)
-- Never return error details from unhandled exceptions in production responses
-
-## Git
-
-- Conventional commits: feat:, fix:, chore:
-- Run the full check before committing: `ruff check . && ruff format --check . && mypy src/ && pytest`
-
-## Do NOT
-
-- Do not use `import *`
-- Do not use `objects.raw()` or raw SQL — use the repository layer
-- Do not use `print()` — use the configured `logging` module
-- Do not use `*` imports
-
-## Status
-
-Pre-M0: the repository holds only the design. There is no code, build, lint or test setup yet. [PRD.md](PRD.md) is the approved spec and the source of truth; read the relevant section before implementing anything, and update this file once real commands exist.
-
-Planned toolchain (PRD 5.7): Python 3.12, `temporalio`, ruff, mypy, pytest with the Temporal test environment (time skipping), Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
+- `from __future__ import annotations` at the top of every module (enforced by ruff)
+- Type hints on all function signatures; mypy runs in strict mode
+- Pydantic models for data that crosses a boundary (workflow and activity inputs/outputs, config files, external APIs) — never raw dicts
+- `pathlib.Path`, not `os.path`; f-strings for formatting
+- Google-style docstrings on public functions, classes and methods
+- No `print()` — use `logging`. No `*` imports
+- Telemetry DB (M2): `psycopg` 3 with numbered plain-SQL migration files and a small runner. No ORM, no Alembic (plan D2)
+- Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`
 
 ## What the system is
 
