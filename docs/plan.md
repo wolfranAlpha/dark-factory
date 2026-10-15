@@ -48,6 +48,7 @@ These are implementation choices. They are not in the PRD. Each can be challenge
 | D10 | The LLM base URL is configurable everywhere (orchestrator and sandbox), so tests point at a stub OpenAI-compatible server | Deterministic tests now, zero-cost load test in M4 |
 | D11 | Self-hosted deploys after M1.10: merging is followed by `docker compose up -d --build worker`. Workflow code changes must stay replay-safe: CI replays recorded histories, and incompatible changes use `workflow.patched` | The system rewrites the code it runs on. In-flight runs must survive that |
 | D12 | GitHub App has no `workflows` permission | Owner decision. CI can never be changed by an agent |
+| D14 | The orchestrator (this repo) targets Python 3.14, not 3.12 as PRD 5.7 first said. Target repos and the sandbox image are unaffected and stay on their own versions | Owner decision. 3.14 is the installed interpreter; one version locally and in CI |
 
 ## Resolved questions
 
@@ -70,7 +71,7 @@ Exit criteria (PRD §8): CI, Docker Compose with the Temporal dev server, GitHub
 
 ### M0.1 Python project skeleton and CLAUDE.md cleanup
 - **Value:** the repo can be linted, type-checked and tested locally.
-- **Scope:** `pyproject.toml` (Python 3.12, `temporalio`, `pydantic`, `httpx`, `pyyaml`; dev: `ruff`, `mypy`, `pytest`, `pytest-asyncio`, `respx`), `src/dark_factory/__init__.py`, ruff and mypy config (strict), one trivial test, `.env.example`. Rewrite CLAUDE.md: remove the FastAPI, SQLAlchemy, Alembic and repository-layer template sections (D2), add the real commands and structure, add Windows venv activation (`.venv\Scripts\activate`).
+- **Scope:** `pyproject.toml` (Python 3.14 (D14), `temporalio`, `pydantic`, `httpx`, `pyyaml`; dev: `ruff`, `mypy`, `pytest`, `pytest-asyncio`, `respx`), `src/dark_factory/__init__.py`, ruff and mypy config (strict), one trivial test, `.env.example`. Rewrite CLAUDE.md: remove the FastAPI, SQLAlchemy, Alembic and repository-layer template sections (D2), add the real commands and structure, add Windows venv activation (`.venv\Scripts\activate`).
 - **Acceptance:** `ruff check . && ruff format --check . && mypy src/ && pytest` passes on a clean checkout.
 - **Depends on:** none.
 

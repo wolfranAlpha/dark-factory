@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Temporal-based pipeline that turns an owner-labelled GitHub issue into a reviewed, merged PR."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
     "temporalio>=1.34",
     "pydantic>=2.14",
@@ -30,7 +30,7 @@ dev = [
 packages = ["src/dark_factory"]
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py314"
 line-length = 100
 src = ["src", "tests"]
 
@@ -67,7 +67,7 @@ required-imports = ["from __future__ import annotations"]
 "tests/**" = ["D", "ANN"]
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 strict = true
 mypy_path = "src"
 packages = ["dark_factory"]

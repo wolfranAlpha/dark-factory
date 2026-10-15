@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D1 to D13). Read the relevant section before implementing anything.
 
-Toolchain (PRD 5.7): Python 3.12, `temporalio`, `pydantic`, `httpx`, `pyyaml`; ruff, mypy (strict), pytest with `pytest-asyncio`, `respx` and the Temporal test environment (time skipping). Later: Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
+Toolchain (PRD 5.7): Python 3.14 (plan D14), `temporalio`, `pydantic`, `httpx`, `pyyaml`; ruff, mypy (strict), pytest with `pytest-asyncio`, `respx` and the Temporal test environment (time skipping). Later: Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
 
 ## Setup
 
-- Create the venv with Python 3.12: `py -3.12 -m venv .venv` (Windows) or `python3.12 -m venv .venv`
+- Create the venv with Python 3.14: `py -3.14 -m venv .venv` (Windows) or `python3.14 -m venv .venv`
 - Activate it before running anything: `.venv\Scripts\activate` (Windows) or `source .venv/bin/activate` (Linux/macOS, Git Bash: `source .venv/Scripts/activate`)
 - Install: `pip install -e ".[dev]"`
 - Copy `.env.example` to `.env` for local development. `.env` is git-ignored
