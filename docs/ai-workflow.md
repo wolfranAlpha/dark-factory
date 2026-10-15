@@ -39,6 +39,8 @@ issue → coding agent on a branch → PR → CI → cross-vendor review by hand
    - a verdict: `approve`, `changes` or `reject`;
    - a list of findings, each with a file, a line where it applies and the problem.
 
+   **Temporary exception:** until the owner starts using paid OpenRouter models, the review may come from the **same vendor** as the implementer. It must then run in a separate session with fresh context, never in the session that wrote the code. The log entry marks such a review as same-vendor. This applies only to the manual loop. In the factory the reviewer is never the same vendor as the implementer (PRD §5.2).
+
    The owner posts the review as a PR comment headed `Review: <vendor> <model>`. This mirrors the factory's structured reviewer (PRD §5.2, point 3). The review is input for the owner, not an instruction to the implementer: the owner decides which findings to act on.
 6. **Revisions.** The implementer addresses the findings the owner accepts, in new commits on the same branch, and fills in the review fields of the log entry. After 3 review rounds without an `approve`, the owner decides whether to merge, rescope or close (same budget as the factory, plan resolved question 2).
 7. **Owner merges.** Squash merge; the PR title becomes the commit on `main`, and the branch is deleted automatically.
@@ -116,4 +118,11 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Cost and duration:** not recorded
 - **Worked:** the four labels already existed on the repo, so the step reduced to this file and the issue template. The agent asked the owner three questions (reviewer vendor, where the review is recorded, backfilling M0.1 and M0.2) instead of guessing. The review found a real ambiguity: "agent" meant both the `agent` label and the coding agent of the manual loop. The Labels section now separates the two
 - **Failed / model mistakes:** the reviewer did not follow the requested format (no verdict, no file and line per finding). It attributed text to `agent-task.md` that is not in it, and it proposed running manual issues "without agent involvement", which contradicts the plan's definition of the manual loop (a coding agent driven by the owner). That fix was not applied. A small free model may be too weak for review; consider a stronger one next time
+- **Routing changes:** none
+
+### Workflow change: same-vendor review allowed for now (PR #23)
+
+- **Date:** 2026-10-15
+- **Change:** until the owner starts using paid OpenRouter models, the manual loop's review may come from the same vendor as the implementer, in a separate session with fresh context. The factory keeps its cross-vendor rule
+- **Reason:** owner decision. The free cross-vendor reviewer used for M0.3 (NVIDIA Nemotron 3 Nano Omni) gave no verdict and made an incorrect claim
 - **Routing changes:** none

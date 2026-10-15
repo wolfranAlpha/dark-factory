@@ -88,5 +88,5 @@ These are security and design guarantees, enforced by capabilities rather than p
 ## Repo conventions
 
 - LF line endings enforced by `.gitattributes` (`* text=auto eol=lf`).
-- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>`, PR with `Closes #<n>`, cross-vendor review by hand, owner merges. Each closing PR adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
+- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>`, PR with `Closes #<n>`, cross-vendor review by hand (same vendor allowed in a fresh session until paid OpenRouter models are in use), owner merges. Each closing PR adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
 - New issues use the template `.github/ISSUE_TEMPLATE/agent-task.md`. Never apply `agent` to a `manual` issue.
