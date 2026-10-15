@@ -195,14 +195,14 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 
 ### Workflow change: post-approve review rules (#24, PR #25)
 
-- **Date:** pending
+- **Date:** 2026-10-15
 - **Change:** step 6 now covers every outcome of an `approve`. If no findings are accepted, the PR is ready without a confirm round. A non-minor finding that comes with an `approve`, in any round, goes to the owner and takes precedence over the other cases. The confirm round is outside the 3-round budget, and at most one runs; after it, any non-bookkeeping commit or further round is the owner's call. Steps 2 and 3, the log format and CLAUDE.md now cover an issue with no plan step: branch `<type>/<slug>`, no step suffix in the title, `Closes #<n>` kept, a log heading without the step (a Workflow change entry when the change is to this workflow), and "none" as the plan-step reviewer input. The PR #23 entry now lists the permanent loop changes that PR made, and the reviewer prompt is re-wrapped to one width with its wording unchanged
 - **Reason:** follow-up to the round 9 confirm review on PR #23 (findings 2 to 4), moved to issue #24 under the step 6 rule. Owner decisions: the confirm round is outside the budget, the naming for an issue with no plan step, and, from round 1 finding 2, its log heading and reviewer input. The round 2 confirm review returned `changes`; the owner allowed up to 2 extra rounds
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** pending
-- **Review rounds:** pending
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/25#issuecomment-6201619512), verdict `approve`, with 5 minor findings; 1, 3 and 4 applied, 2 applied after an owner decision, 5 (informational) not applied. Round 2, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/25#issuecomment-6201666718), verdict `changes`, with 1 non-minor and 2 minor findings. The owner allowed up to 2 extra rounds, and all 3 were applied. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/25#issuecomment-6201769337), verdict `approve`, with 3 minor findings; 1 and 2 applied, 3 (a title rule for issues with no plan step) sent to the owner. Round 4, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/25#issuecomment-6201796416), verdict `approve`, with 4 minor findings. Under the step 6 rule they were not applied here: findings 1 to 3 went to follow-up issue #26, together with the round 3 title question, and finding 4 (round history in the Reason field) was dropped, because the Reason field records the owner's budget extension, which needs that context
+- **Review rounds:** 4 (approve, changes, approve, approve; findings per round: 5, 3 (1 non-minor), 3 and 4)
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** pending
-- **Failed / model mistakes:** pending
+- **Worked:** asking the owner up front settled the two open questions (the budget and the naming for an issue with no plan step). The reviewers kept finding real gaps: round 2 caught that the step 6 cases overlapped, so a non-minor finding could be declined without the owner seeing it. Checking each claim about PR #23 against its diff kept the Change field accurate
+- **Failed / model mistakes:** the first version of step 6 listed the cases without an order, which the confirm round caught as a non-minor finding. Covering an issue with no plan step in steps 2 and 3 pulled in more places (the log heading, the reviewer input, the Task format, step 2's reading list) than were first changed, and each review found another one. The Worked and Failed fields were left `pending` until the bookkeeping commit, which goes beyond the exemption's review fields; they should be written before the last review
 - **Routing changes:** none
