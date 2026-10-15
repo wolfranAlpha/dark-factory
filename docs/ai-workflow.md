@@ -35,7 +35,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    - works on a branch named `<type>/m<x.y>-<slug>` (for example `feat/m0.1-project-skeleton`), where `<type>` is the Conventional Commits type. Factory runs use `df/issue-<n>` instead (D9);
    - runs the full check (`ruff check . && ruff format --check . && mypy src/ && pytest`) before every commit;
    - adds the log entry for the issue to this file (see [Log format](#log-format)), with the review fields left as `pending`.
-3. **PR.** The title is a Conventional Commit ending with the step, for example `docs: manual agent loop, labels and work log (M0.3)`. The body has `Closes #<n>`, what changed, the design choices open to challenge, and the acceptance criteria as a checklist.
+3. **PR.** The title is a Conventional Commit ending with the step, for example `docs: manual agent loop, labels and work log (M0.3)`. The body has `Closes #<n>`, what changed, the design choices open to challenge, and the acceptance criteria as a checklist. A Workflow change with no issue has no `Closes #<n>` line; its body states the change and points to its Workflow change entry in place of acceptance criteria.
 4. **CI.** The `check` job must pass. Branch protection on `main` requires it.
 5. **Cross-vendor review.** The owner gives the PR to a model from a **different vendor than the implementer** (when Claude implements, any non-Anthropic model; but see the temporary exception below). The reviewer gets the issue, the plan step and the diff, and returns:
    - a verdict: `approve`, `changes` or `reject`;
@@ -101,7 +101,9 @@ One entry per issue, appended at the end of the log in merge order. The PR that 
 - **Routing changes:** changes to `routing.yaml` and why, or "none"
 ```
 
-Under the temporary exception in step 5, and only then, the Reviewer line also carries the marker `[same-vendor, fresh session]` after the model. With several review rounds, list each round's review link and verdict.
+With several review rounds, list each round's review link and verdict.
+
+Under the temporary exception in step 5, and only then, the Reviewer line also carries the marker `[same-vendor, fresh session]` after the model.
 
 A change to this workflow that has no issue gets a **Workflow change** entry instead:
 
@@ -115,6 +117,7 @@ A change to this workflow that has no issue gets a **Workflow change** entry ins
 - **Reviewer:** as in an issue entry
 - **Review rounds:** <n>
 - **Owner edits:** as in an issue entry
+- **Cost and duration:** as in an issue entry
 - **Worked:** what went well
 - **Failed / model mistakes:** what went wrong, and what the models got wrong
 - **Routing changes:** changes to `routing.yaml` and why, or "none"
@@ -170,9 +173,10 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Change:** until M0.5 is merged, the manual loop's review is by default a same-vendor review (plan D15). It runs as an automatic review: a fresh-context reviewer subagent, the review posted verbatim on the PR, the implementer applying findings and re-reviewing for up to 3 rounds, with the owner able to override. The factory keeps its cross-vendor rule
 - **Reason:** owner decision. Without an OpenRouter account, the free cross-vendor models are cumbersome to use and too weak: on M0.3, NVIDIA Nemotron 3 Nano Omni gave no verdict and made an incorrect claim. The owner connects to OpenRouter during the M0.5 model research, which ends the exception
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200947695), verdict `changes`; findings applied apart from editing the M0.5 issue, which was left to the owner. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200986346), verdict `changes`; all 8 findings applied. The budget ran out without an `approve`, so the owner decided whether to merge
-- **Review rounds:** 3
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200947695), verdict `changes`; findings applied apart from editing the M0.5 issue, which was left to the owner. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200986346), verdict `changes`; all 8 findings applied. The budget of 3 ran out without an `approve`. The owner extended it by up to 5 rounds, stopping at the first `approve`, to find out how many rounds a change like this needs. Round 4: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201068125), verdict `approve`, with 5 minor findings; findings 1 to 4 applied, 5 (informational) not applied
+- **Review rounds:** 4 (first `approve` in round 4; findings per round: 7, 7, 8, 5 minor)
 - **Owner edits:** none
+- **Cost and duration:** not recorded
 - **Worked:** each fresh reviewer found real gaps that the implementer had missed: a wrong PRD citation, no end condition or backstop, the review not being treated as data, the reviewer prompt not matching the stated rules, and log fields missing. Every round followed the requested format
-- **Failed / model mistakes:** the implementer kept writing rules into step 5 without carrying them into the reviewer prompt or the log templates, so each round found new inconsistencies of the same kind. The first version cited PRD §5.2 for the vendor rule instead of §5.5. Three rounds on a docs-only change is costly; most findings in rounds 2 and 3 were minor
+- **Failed / model mistakes:** the implementer kept writing rules into step 5 without carrying them into the reviewer prompt or the log templates, so each round found new inconsistencies of the same kind. The first version cited PRD §5.2 for the vendor rule instead of §5.5. Four rounds on a docs-only change is costly; most findings in rounds 2 to 4 were minor. A rule worth trying: before each review, check that every rule added to step 5 also appears in the reviewer prompt and the templates
 - **Routing changes:** none
