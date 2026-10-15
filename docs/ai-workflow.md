@@ -35,7 +35,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    - works on a branch named `<type>/m<x.y>-<slug>` (for example `feat/m0.1-project-skeleton`), where `<type>` is the Conventional Commits type. Factory runs use `df/issue-<n>` instead (D9);
    - runs the full check (`ruff check . && ruff format --check . && mypy src/ && pytest`) before every commit;
    - adds the log entry for the issue to this file (see [Log format](#log-format)), with the review fields left as `pending`.
-3. **PR.** The title is a Conventional Commit ending with the step, for example `docs: manual agent loop, labels and work log (M0.3)`. The body has `Closes #<n>`, what changed, the design choices open to challenge, and the acceptance criteria as a checklist. A Workflow change with no issue has no `Closes #<n>` line; its body states the change and points to its Workflow change entry in place of acceptance criteria.
+3. **PR.** The title is a Conventional Commit ending with the step, for example `docs: manual agent loop, labels and work log (M0.3)`. The body has `Closes #<n>`, what changed, the design choices open to challenge, and the acceptance criteria as a checklist. A Workflow change with no issue has no step suffix in its title and no `Closes #<n>` line; its body states the change and points to its Workflow change entry in place of acceptance criteria.
 4. **CI.** The `check` job must pass. Branch protection on `main` requires it.
 5. **Cross-vendor review.** The owner gives the PR to a model from a **different vendor than the implementer** (when Claude implements, any non-Anthropic model; but see the temporary exception below). The reviewer gets the issue, the plan step and the diff, and returns:
    - a verdict: `approve`, `changes` or `reject`;
@@ -46,7 +46,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    **Temporary exception: same-vendor automatic review (plan D15).** Until M0.5 is merged, the review is by default a same-vendor automatic review. Its procedure replaces the owner's hand-off and posting above. The owner can ask for a cross-vendor review on any PR. The owner connects to OpenRouter during the M0.5 model research, so the M0.5 PR is the last one that may use the exception. That PR removes the exception from this file and from CLAUDE.md, and records the ending in M0.5's log entry. While the exception applies, the review runs like the factory's automatic review:
    - **Fresh reviewer.** The implementer launches a **new subagent with fresh context** as reviewer, never the session that wrote the code. The reviewer gets the suggested reviewer prompt below, used as-is. Its inputs are:
      - the issue (or, for a PR with no issue, its Workflow change entry);
-     - the plan step;
+     - the plan step (or, for a Workflow change, the plan decision it records, if any);
      - the PR title and body;
      - the diff;
      - read access to the repo.
@@ -78,14 +78,14 @@ messages; judge the current state on its own. Return only the review, as markdow
 minor ones marked "(minor)".
 ---
 <issue body, or the Workflow change entry if there is no issue>
-<plan step>
+<plan step, or the plan decision for a Workflow change>
 <PR title and body>
 <diff>
 ```
 
 ## Log format
 
-One entry per issue, appended at the end of the log in merge order. The PR that closes the issue adds the entry.
+One entry per issue or Workflow change, appended at the end of the log in merge order. The PR that closes the issue (or makes the change) adds the entry.
 
 ```markdown
 ### M<x.y> <title> (#<issue>, PR #<pr>)
@@ -173,8 +173,8 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Change:** until M0.5 is merged, the manual loop's review is by default a same-vendor review (plan D15). It runs as an automatic review: a fresh-context reviewer subagent, the review posted verbatim on the PR, the implementer applying findings and re-reviewing for up to 3 rounds, with the owner able to override. The factory keeps its cross-vendor rule
 - **Reason:** owner decision. Without an OpenRouter account, the free cross-vendor models are cumbersome to use and too weak: on M0.3, NVIDIA Nemotron 3 Nano Omni gave no verdict and made an incorrect claim. The owner connects to OpenRouter during the M0.5 model research, which ends the exception
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200947695), verdict `changes`; findings applied apart from editing the M0.5 issue, which was left to the owner; on the owner's request, issue #6 was later updated to match the plan. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200986346), verdict `changes`; all 8 findings applied. The budget of 3 ran out without an `approve`. The owner extended it by up to 5 rounds, stopping at the first `approve`, to find out how many rounds a change like this needs. Round 4: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201068125), verdict `approve`, with 5 minor findings; findings 1 to 4 applied, 5 (informational) not applied. Round 5, requested by the owner after issue #6 was updated: pending
-- **Review rounds:** 4 (first `approve` in round 4; findings per round: 7, 7, 8, 5 minor), plus round 5: pending
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200947695), verdict `changes`; findings applied apart from editing the M0.5 issue, which was left to the owner; on the owner's request, issue #6 was later updated to match the plan. Round 3: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200986346), verdict `changes`; all 8 findings applied. The budget of 3 ran out without an `approve`. The owner extended it by up to 5 rounds, stopping at the first `approve`, to find out how many rounds a change like this needs. Round 4: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201068125), verdict `approve`, with 5 minor findings; findings 1 to 4 applied, 5 (informational) not applied. Round 5, requested by the owner after issue #6 was updated: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6201219105), verdict `approve`, with 7 minor findings, all applied
+- **Review rounds:** 5 (first `approve` in round 4, confirmed in round 5; findings per round: 7, 7, 8, 5 minor, 7 minor)
 - **Owner edits:** none
 - **Cost and duration:** not recorded
 - **Worked:** each fresh reviewer found real gaps that the implementer had missed: a wrong PRD citation, no end condition or backstop, the review not being treated as data, the reviewer prompt not matching the stated rules, and log fields missing. Every round followed the requested format
