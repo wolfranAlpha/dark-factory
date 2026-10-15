@@ -13,6 +13,8 @@ Only the owner applies these labels. Until M1.10 none of them triggers anything;
 | `gate:merge` | The run pauses before merge until the owner approves the PR. Always on in MVP; the label takes effect in M5 (plan, resolved question 1) |
 | `manual` | Done through the manual loop. **A `manual` issue never gets the `agent` label** |
 
+Two different things are called "agent" here. The **`agent` label** hands an issue to the factory. A **coding agent** (such as Claude Code) is the tool the owner drives by hand in the manual loop below. A `manual` issue is never handed to the factory, but a coding agent may still do the work, with the owner driving it.
+
 An issue is `manual` when it changes `.github/workflows/` (the GitHub App has no `workflows` permission, D12) or when it is owner-only setup such as creating the GitHub App or bootstrapping AWS. Before M1.10 every issue runs through the manual loop, with or without the label.
 
 ## Task format
@@ -108,10 +110,10 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 
 - **Date:** pending
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** pending
-- **Review rounds:** pending
-- **Owner edits:** none so far
+- **Reviewer:** NVIDIA `Nemotron 3 Nano Omni` (free), [review](https://github.com/wolfranAlpha/dark-factory/pull/22#issuecomment-6194862687). Verdict: none given; read as `changes`
+- **Review rounds:** 1
+- **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** the four labels already existed on the repo, so the step reduced to this file and the issue template. The agent asked the owner three questions (reviewer vendor, where the review is recorded, backfilling M0.1 and M0.2) instead of guessing
-- **Failed / model mistakes:** none so far
+- **Worked:** the four labels already existed on the repo, so the step reduced to this file and the issue template. The agent asked the owner three questions (reviewer vendor, where the review is recorded, backfilling M0.1 and M0.2) instead of guessing. The review found a real ambiguity: "agent" meant both the `agent` label and the coding agent of the manual loop. The Labels section now separates the two
+- **Failed / model mistakes:** the reviewer did not follow the requested format (no verdict, no file and line per finding). It attributed text to `agent-task.md` that is not in it, and it proposed running manual issues "without agent involvement", which contradicts the plan's definition of the manual loop (a coding agent driven by the owner). That fix was not applied. A small free model may be too weak for review; consider a stronger one next time
 - **Routing changes:** none
