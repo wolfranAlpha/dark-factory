@@ -49,7 +49,7 @@ These are implementation choices. They are not in the PRD. Each can be challenge
 | D11 | Self-hosted deploys after M1.10: merging is followed by `docker compose up -d --build worker`. Workflow code changes must stay replay-safe: CI replays recorded histories, and incompatible changes use `workflow.patched` | The system rewrites the code it runs on. In-flight runs must survive that |
 | D12 | GitHub App has no `workflows` permission | Owner decision. CI can never be changed by an agent |
 | D14 | The orchestrator (this repo) targets Python 3.14, not 3.12 as PRD 5.7 first said. Target repos and the sandbox image are unaffected and stay on their own versions | Owner decision. 3.14 is the installed interpreter; one version locally and in CI |
-| D15 | Until M0.5 is merged, manual-loop PRs get a same-vendor automatic review by a fresh-context reviewer subagent by default (docs/ai-workflow.md, step 5). M0.5 ends the exception | Owner decision. Free cross-vendor models are cumbersome and too weak; the owner connects to OpenRouter during the M0.5 model research. The factory's cross-vendor rule (PRD §5.5) is unchanged |
+| D15 | Until M0.5 is merged, manual-loop PRs get a same-vendor automatic review by a fresh-context reviewer subagent by default (docs/ai-workflow.md, step 5). M0.5 ends the exception | Owner decision. Free cross-vendor models are cumbersome and too weak; the owner connects to OpenRouter during the M0.5 model research. The factory's cross-vendor rule (PRD §5.5) is unchanged. Departs from PRD §6 ("the same loop runs by hand", which includes cross-vendor review) for the manual loop only, until M0.5 |
 
 ## Resolved questions
 
