@@ -46,7 +46,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    **Temporary exception: same-vendor automatic review (plan D15).** Until M0.5 is merged, the review is by default a same-vendor automatic review. Its procedure replaces the owner's hand-off, posting and triage of findings above. The owner can ask for a cross-vendor review on any PR. The owner connects to OpenRouter during the M0.5 model research, so the M0.5 PR is the last one that may use the exception. That PR removes the exception from this file and from CLAUDE.md, and records the ending in M0.5's log entry. While the exception applies, the review runs like the factory's automatic review:
    - **Fresh reviewer.** The implementer launches a **new subagent with fresh context** as reviewer, never the session that wrote the code. The reviewer gets the suggested reviewer prompt below, used as-is. Its inputs are:
      - the issue (or, for a PR with no issue, its Workflow change entry);
-     - the plan step (or, for a Workflow change, the plan decision it records, if any; "none" for an issue with no plan step);
+     - the plan step (or, for a Workflow change, the plan decision it records; "none" when there is neither);
      - the PR title and body;
      - the diff;
      - read access to the repo.
@@ -61,9 +61,9 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    This applies only to the manual loop. In the factory the reviewer is never the same vendor as the implementer (PRD §5.5).
 6. **Revisions.** The implementer addresses the accepted findings in new commits on the same branch. The owner accepts findings, or the implementer does under the step 5 exception. The implementer also fills in the review fields of the log entry. After 3 review rounds without an `approve`, the owner decides whether to merge, rescope or close (same budget as the factory, plan resolved question 2).
 
-   **After an `approve` (owner rule).** Any commit after the last review needs a new round, with one exemption (bookkeeping, below). What follows depends on the findings that came with the `approve`, checked in this order:
+   **After an `approve` (owner rule).** Any commit after the last review needs a new round, with one exemption (bookkeeping, below). What follows depends on the findings that came with the `approve`, checked in this order. In every case, the reason for each finding not accepted is posted on the PR, as in step 5.
    - **Any finding not marked minor:** in any round, including the confirm round, the `approve` goes to the owner, who decides what to do with each finding and how the review continues. The cases below apply only when every finding is minor.
-   - **No findings, or none accepted:** the PR is ready and no confirm round runs. The reason for each finding not accepted is posted on the PR, as in step 5.
+   - **No findings, or none accepted:** the PR is ready and no confirm round runs.
    - **Minor findings accepted:** the accepted ones are applied and **one confirm round** follows. If the confirm round approves, the PR is ready. Its minor findings are not applied in this PR: they go to a follow-up issue, or are dropped with a reason posted on the PR. If it returns `changes` or `reject`, the owner decides.
 
    The confirm round is outside the 3-round budget, which counts rounds until the first `approve`, so an `approve` in round 3 with accepted minor findings still gets its confirm round. There is at most one confirm round. After it, any commit other than bookkeeping, and any further round, is the owner's call.
