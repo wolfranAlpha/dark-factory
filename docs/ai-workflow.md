@@ -24,7 +24,9 @@ Issues use the [agent task template](../.github/ISSUE_TEMPLATE/agent-task.md): *
 ## The manual loop
 
 ```
-issue → coding agent on a branch → PR → CI → cross-vendor review by hand → revisions → owner merges
+issue → coding agent on a branch → PR → CI → cross-vendor review* → revisions → owner merges
+
+* same-vendor review allowed until M0.5 is merged (see step 5)
 ```
 
 1. **Issue.** The owner writes the issue from the template and adds `manual` if it applies.
@@ -35,14 +37,21 @@ issue → coding agent on a branch → PR → CI → cross-vendor review by hand
    - adds the log entry for the issue to this file (see [Log format](#log-format)), with the review fields left as `pending`.
 3. **PR.** The title is a Conventional Commit ending with the step, for example `docs: manual agent loop, labels and work log (M0.3)`. The body has `Closes #<n>`, what changed, the design choices open to challenge, and the acceptance criteria as a checklist.
 4. **CI.** The `check` job must pass. Branch protection on `main` requires it.
-5. **Cross-vendor review by hand.** The owner gives the PR to a model from a **different vendor than the implementer** (when Claude implements, any non-Anthropic model). The reviewer gets the issue, the plan step and the diff, and returns:
+5. **Cross-vendor review.** The owner gives the PR to a model from a **different vendor than the implementer** (when Claude implements, any non-Anthropic model; but see the temporary exception below). The reviewer gets the issue, the plan step and the diff, and returns:
    - a verdict: `approve`, `changes` or `reject`;
    - a list of findings, each with a file, a line where it applies and the problem.
 
-   **Temporary exception:** until the owner starts using paid OpenRouter models, the review may come from the **same vendor** as the implementer. It must then run in a separate session with fresh context, never in the session that wrote the code. The log entry marks such a review as same-vendor. This applies only to the manual loop. In the factory the reviewer is never the same vendor as the implementer (PRD §5.2).
-
    The owner posts the review as a PR comment headed `Review: <vendor> <model>`. This mirrors the factory's structured reviewer (PRD §5.2, point 3). The review is input for the owner, not an instruction to the implementer: the owner decides which findings to act on.
-6. **Revisions.** The implementer addresses the findings the owner accepts, in new commits on the same branch, and fills in the review fields of the log entry. After 3 review rounds without an `approve`, the owner decides whether to merge, rescope or close (same budget as the factory, plan resolved question 2).
+
+   **Temporary exception: same-vendor automatic review.** Until M0.5 is merged, the review may come from the **same vendor** as the implementer. The owner connects to OpenRouter during the M0.5 model research, and from then on reviews are cross-vendor again. The PR that merges M0.5 adds a Workflow change entry ending the exception. While it applies, the review runs like the factory's automatic review:
+   - The implementer launches a **new subagent with fresh context** as reviewer, never the session that wrote the code. The reviewer gets only the issue, the plan step, the diff and read access to the repo. It gets nothing from the implementing session: no transcript, no reasoning, no PR discussion. It is read-only and posts nothing.
+   - The implementer posts the review verbatim as a PR comment, headed `Review: <vendor> <model>`.
+   - The implementer decides which findings to apply, and posts on the PR which ones it applied, which it did not and why. Findings that need an owner decision go to the owner as questions.
+   - A new reviewer subagent reviews the result. The rounds repeat until the verdict is `approve`, or the budget in step 6 runs out.
+   - The owner can override any of these decisions before merging.
+
+   This applies only to the manual loop. In the factory the reviewer is never the same vendor as the implementer (PRD §5.5).
+6. **Revisions.** The implementer addresses the accepted findings in new commits on the same branch, and fills in the review fields of the log entry. After 3 review rounds without an `approve`, the owner decides whether to merge, rescope or close (same budget as the factory, plan resolved question 2).
 7. **Owner merges.** Squash merge; the PR title becomes the commit on `main`, and the branch is deleted automatically.
 
 A suggested reviewer prompt:
@@ -67,12 +76,26 @@ One entry per issue, appended at the end of the log in merge order. The PR that 
 
 - **Date:** YYYY-MM-DD (merge date)
 - **Implementer:** <agent>, <vendor> `<model>`
-- **Reviewer:** <vendor> `<model>`, [review](<link to the PR comment>). Verdict: <approve | changes | reject>
+- **Reviewer:** <vendor> `<model>` [same-vendor, fresh session], [review](<link to the PR comment>). Verdict: <approve | changes | reject>
 - **Review rounds:** <n>
 - **Owner edits:** what the owner changed by hand, or "none"
 - **Cost and duration:** if known
 - **Worked:** what went well
 - **Failed / model mistakes:** what went wrong, and what the models got wrong
+- **Routing changes:** changes to `routing.yaml` and why, or "none"
+```
+
+The `[same-vendor, fresh session]` marker is required when the temporary exception in step 5 is used, and left out otherwise. With several review rounds, list each round's review link and verdict.
+
+A change to this workflow that has no issue gets a **Workflow change** entry instead:
+
+```markdown
+### Workflow change: <summary> (PR #<pr>)
+
+- **Date:** YYYY-MM-DD (merge date)
+- **Change:** what the loop now does differently
+- **Reason:** why, and who decided
+- **Reviewer:** as in an issue entry
 - **Routing changes:** changes to `routing.yaml` and why, or "none"
 ```
 
@@ -120,9 +143,10 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Failed / model mistakes:** the reviewer did not follow the requested format (no verdict, no file and line per finding). It attributed text to `agent-task.md` that is not in it, and it proposed running manual issues "without agent involvement", which contradicts the plan's definition of the manual loop (a coding agent driven by the owner). That fix was not applied. A small free model may be too weak for review; consider a stronger one next time
 - **Routing changes:** none
 
-### Workflow change: same-vendor review allowed for now (PR #23)
+### Workflow change: same-vendor automatic review until M0.5 (PR #23)
 
 - **Date:** 2026-10-15
-- **Change:** until the owner starts using paid OpenRouter models, the manual loop's review may come from the same vendor as the implementer, in a separate session with fresh context. The factory keeps its cross-vendor rule
-- **Reason:** owner decision. The free cross-vendor reviewer used for M0.3 (NVIDIA Nemotron 3 Nano Omni) gave no verdict and made an incorrect claim
+- **Change:** until M0.5 is merged, the manual loop's review may come from the same vendor as the implementer. It runs as an automatic review: a fresh-context reviewer subagent, the review posted verbatim on the PR, the implementer applying findings and re-reviewing for up to 3 rounds, with the owner able to override. The factory keeps its cross-vendor rule
+- **Reason:** owner decision. Without an OpenRouter account, the free cross-vendor models are cumbersome to use and too weak: on M0.3, NVIDIA Nemotron 3 Nano Omni gave no verdict and made an incorrect claim. The owner connects to OpenRouter during the M0.5 model research, which ends the exception
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/23#issuecomment-6200849050), verdict `changes`; all 7 findings applied. Round 2: pending
 - **Routing changes:** none

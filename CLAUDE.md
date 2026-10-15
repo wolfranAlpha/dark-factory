@@ -74,7 +74,7 @@ These are security and design guarantees, enforced by capabilities rather than p
 - **Agents hold no credentials.** Sandboxes get a repo snapshot via presigned URL and a scoped OpenRouter key, and return a diff. Only orchestrator activities talk to GitHub, through a narrow client that has no operation for trigger or gate labels.
 - **Decisions are code.** Gate transitions, labels and merges are driven only by typed signals: owner labels, deterministically parsed owner commands (`/approve`, `/changes <text>`, `/reject`), and owner PR reviews. Non-owner comments are dropped before any model sees them; the system never reads its own comments back.
 - **Reviewer output is structured**: verdict enum (`approve` | `changes` | `reject`) plus findings, schema-validated. The orchestrator reads only the verdict; findings go to the implementer inside the data envelope.
-- **Reviewer is never the same vendor as the implementer.**
+- **In the factory, the reviewer is never the same vendor as the implementer.** (The manual loop has a temporary exception until M0.5; see `docs/ai-workflow.md`.)
 - **Protected paths** (`infra/`, `.github/`, system prompts, routing policy, registry, gate code) always force `gate:merge` and can never use `gate:none`. `gate:none` and auto-merge are out of MVP scope.
 - **Unauthorised trigger/gate labels** (sender not on owner allowlist) are removed, commented on, alerted via SNS and recorded; no run starts or advances.
 - **Cost caps:** $5 hard cap per run; the run stops and comments when hit. Raising a cap needs owner approval.
@@ -88,5 +88,5 @@ These are security and design guarantees, enforced by capabilities rather than p
 ## Repo conventions
 
 - LF line endings enforced by `.gitattributes` (`* text=auto eol=lf`).
-- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>`, PR with `Closes #<n>`, cross-vendor review by hand (same vendor allowed in a fresh session until paid OpenRouter models are in use), owner merges. Each closing PR adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
+- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>`, PR with `Closes #<n>`, cross-vendor review (until M0.5 is merged: same-vendor automatic review by a fresh-context subagent, see step 5), owner merges. Each closing PR adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
 - New issues use the template `.github/ISSUE_TEMPLATE/agent-task.md`. Never apply `agent` to a `manual` issue.
