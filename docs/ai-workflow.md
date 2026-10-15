@@ -191,7 +191,7 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Failed / model mistakes:** the implementer kept writing rules into step 5 without carrying them into the reviewer prompt or the log templates, so each round found new inconsistencies of the same kind. The first version cited PRD §5.2 for the vendor rule instead of §5.5. Nine rounds on a docs-only change is costly. From round 3 on, nearly all findings were minor, and every round that approved still had minor findings; under "every change is reviewed" the rounds could not end on their own, which the one-confirm-round rule now fixes. A rule worth trying: before each review, check that every rule added to step 5 also appears in the reviewer prompt and the templates
 - **Routing changes:** none
 
-### Workflow change: post-approve review rules (#24, PR #pending)
+### Workflow change: post-approve review rules (#24, PR #25)
 
 - **Date:** pending
 - **Change:** step 6 now covers every outcome of an `approve`. If no findings are accepted, the PR is ready without a confirm round. A non-minor finding that comes with an `approve` goes to the owner. The confirm round is outside the 3-round budget, and at most one runs. Steps 2 and 3, the log format and CLAUDE.md now cover an issue with no plan step: branch `<type>/<slug>`, no step suffix in the title, `Closes #<n>` kept, and a Workflow change entry headed `(#<issue>, PR #<pr>)` when the change is to this workflow. The PR #23 entry now lists the permanent loop changes that PR made, and the reviewer prompt is re-wrapped to one width with its wording unchanged
