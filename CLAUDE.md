@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D1 to D13). Read the relevant section before implementing anything.
+M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D-numbers). Read the relevant section before implementing anything.
 
 Toolchain (PRD 5.7): Python 3.14 (plan D14), `temporalio`, `pydantic`, `httpx`, `pyyaml`; ruff, mypy (strict), pytest with `pytest-asyncio`, `respx` and the Temporal test environment (time skipping). Later: Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
 
@@ -74,7 +74,7 @@ These are security and design guarantees, enforced by capabilities rather than p
 - **Agents hold no credentials.** Sandboxes get a repo snapshot via presigned URL and a scoped OpenRouter key, and return a diff. Only orchestrator activities talk to GitHub, through a narrow client that has no operation for trigger or gate labels.
 - **Decisions are code.** Gate transitions, labels and merges are driven only by typed signals: owner labels, deterministically parsed owner commands (`/approve`, `/changes <text>`, `/reject`), and owner PR reviews. Non-owner comments are dropped before any model sees them; the system never reads its own comments back.
 - **Reviewer output is structured**: verdict enum (`approve` | `changes` | `reject`) plus findings, schema-validated. The orchestrator reads only the verdict; findings go to the implementer inside the data envelope.
-- **Reviewer is never the same vendor as the implementer.**
+- **In the factory, the reviewer is never the same vendor as the implementer.** (The manual loop has a temporary exception until M0.5; see `docs/ai-workflow.md`.)
 - **Protected paths** (`infra/`, `.github/`, system prompts, routing policy, registry, gate code) always force `gate:merge` and can never use `gate:none`. `gate:none` and auto-merge are out of MVP scope.
 - **Unauthorised trigger/gate labels** (sender not on owner allowlist) are removed, commented on, alerted via SNS and recorded; no run starts or advances.
 - **Cost caps:** $5 hard cap per run; the run stops and comments when hit. Raising a cap needs owner approval.
@@ -88,5 +88,5 @@ These are security and design guarantees, enforced by capabilities rather than p
 ## Repo conventions
 
 - LF line endings enforced by `.gitattributes` (`* text=auto eol=lf`).
-- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>`, PR with `Closes #<n>`, cross-vendor review by hand, owner merges. Each closing PR adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
+- Every issue runs through the manual agent loop in [docs/ai-workflow.md](docs/ai-workflow.md) until M1.10: branch `<type>/m<x.y>-<slug>` (a Workflow change with no issue: `<type>/<slug>`), PR with `Closes #<n>` (a Workflow change with no issue: see step 3), cross-vendor review (until M0.5 is merged, the default is a same-vendor automatic review by a fresh-context subagent, unless the owner asks for cross-vendor; see step 5 and plan D15), owner merges. Each closing PR (or Workflow change PR) adds a log entry there (what worked, what failed, model mistakes, `routing.yaml` changes with reasons).
 - New issues use the template `.github/ISSUE_TEMPLATE/agent-task.md`. Never apply `agent` to a `manual` issue.
