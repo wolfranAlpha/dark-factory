@@ -97,7 +97,7 @@ Exit criteria (PRD §8): CI, Docker Compose with the Temporal dev server, GitHub
 ### M0.5 Config: `registry.yaml` and `routing.yaml` v1
 - **Value:** what to serve and which model to use become versioned and validated, as PRD §5.6 requires ("Git is the source of truth").
 - **Scope:** Pydantic models and loaders in `dark_factory.config`. **Registry:** owner allowlist (GitHub logins), and per repo `full_name`, default plan gate (merge is always gated in MVP), test command, routing overrides. **Routing:** task type (`plan`, `implement`, `review`, `triage`, `ci_summary`, `commit_message`) → model ID plus vendor, with a version field. Research current OpenRouter models and prices, and propose the v1 table in the PR for owner approval. Add a CI test that loads and validates both files. Initial registry entry: the playground repo. End the same-vendor review exception (D15): remove it from `docs/ai-workflow.md` and CLAUDE.md, and record the ending in M0.5's log entry.
-- **Acceptance:** invalid config fails CI with a clear message. The owner approves the model table.
+- **Acceptance:** invalid config fails CI with a clear message. The owner approves the model table. The same-vendor review exception (D15) is removed from `docs/ai-workflow.md` and CLAUDE.md, and the M0.5 log entry records it.
 - **Depends on:** M0.1.
 
 ### M0.6 GitHub App and playground repo *(manual, owner)*

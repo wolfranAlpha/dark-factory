@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Status
 
-M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D1 to D13). Read the relevant section before implementing anything.
+M0 (foundations) in progress. [PRD.md](PRD.md) is the approved spec and the source of truth; [docs/plan.md](docs/plan.md) gives the build order, the step specs and the design decisions (D-numbers). Read the relevant section before implementing anything.
 
 Toolchain (PRD 5.7): Python 3.14 (plan D14), `temporalio`, `pydantic`, `httpx`, `pyyaml`; ruff, mypy (strict), pytest with `pytest-asyncio`, `respx` and the Temporal test environment (time skipping). Later: Terraform 1.10+, Docker Compose for local runs, `gh webhook forward` for local webhooks.
 
