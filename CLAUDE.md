@@ -12,7 +12,7 @@ Toolchain (PRD 5.7): Python 3.14 (plan D14), `temporalio`, `pydantic`, `httpx`, 
 
 - Create the venv with Python 3.14: `py -3.14 -m venv .venv` (Windows) or `python3.14 -m venv .venv`
 - Activate it before running anything: `.venv\Scripts\activate` (Windows) or `source .venv/bin/activate` (Linux/macOS, Git Bash: `source .venv/Scripts/activate`)
-- Install: `pip install -e ".[dev]"`
+- Install from the lockfile: `pip install --require-hashes -r requirements-dev.lock` then `pip install -e . --no-deps`
 - Copy `.env.example` to `.env` for local development. `.env` is git-ignored
 
 ## Commands
@@ -22,6 +22,7 @@ Toolchain (PRD 5.7): Python 3.14 (plan D14), `temporalio`, `pydantic`, `httpx`, 
 - `ruff check .` — lint
 - `ruff format .` — format
 - `mypy src/` — type check (strict)
+- `uv pip compile pyproject.toml --extra dev --universal --generate-hashes --python-version 3.14 -o requirements-dev.lock` — regenerate the lockfile after changing dependencies in `pyproject.toml` (add `--upgrade` to bump all pins). Commit both files together; CI fails if the lock is stale
 
 Full check, required before every commit (and what CI runs from M0.2):
 
@@ -44,7 +45,18 @@ ruff check . && ruff format --check . && mypy src/ && pytest
 - Google-style docstrings on public functions, classes and methods
 - No `print()` — use `logging`. No `*` imports
 - Telemetry DB (M2): `psycopg` 3 with numbered plain-SQL migration files and a small runner. No ORM, no Alembic (plan D2)
-- Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `test:`
+- [Conventional Commits](https://www.conventionalcommits.org/): `<type>: <summary>`, with `!` after the type for breaking changes. PR titles follow the same format. Types:
+  - `feat:` — new capability
+  - `fix:` — bug fix
+  - `docs:` — documentation only
+  - `style:` — formatting, no behaviour change
+  - `refactor:` — code change that neither fixes a bug nor adds a feature
+  - `perf:` — performance improvement
+  - `test:` — tests only
+  - `build:` — packaging, dependencies, lockfile, Dockerfiles
+  - `ci:` — GitHub Actions workflows
+  - `chore:` — maintenance that fits none of the above
+  - `revert:` — reverts an earlier commit
 
 ## What the system is
 
