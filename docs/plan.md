@@ -49,6 +49,7 @@ These are implementation choices. They are not in the PRD. Each can be challenge
 | D11 | Self-hosted deploys after M1.10: merging is followed by `docker compose up -d --build worker`. Workflow code changes must stay replay-safe: CI replays recorded histories, and incompatible changes use `workflow.patched` | The system rewrites the code it runs on. In-flight runs must survive that |
 | D12 | GitHub App has no `workflows` permission | Owner decision. CI can never be changed by an agent |
 | D14 | The orchestrator (this repo) targets Python 3.14, not 3.12 as PRD 5.7 first said. Target repos and the sandbox image are unaffected and stay on their own versions | Owner decision. 3.14 is the installed interpreter; one version locally and in CI |
+| D15 | Until M0.5 is merged, manual-loop PRs get a same-vendor automatic review by a fresh-context reviewer subagent by default (docs/ai-workflow.md, step 5). M0.5 ends the exception | Owner decision. Free cross-vendor models are cumbersome and too weak; the owner connects to OpenRouter during the M0.5 model research. The factory's cross-vendor rule (PRD §5.5) is unchanged |
 
 ## Resolved questions
 
@@ -95,7 +96,7 @@ Exit criteria (PRD §8): CI, Docker Compose with the Temporal dev server, GitHub
 
 ### M0.5 Config: `registry.yaml` and `routing.yaml` v1
 - **Value:** what to serve and which model to use become versioned and validated, as PRD §5.6 requires ("Git is the source of truth").
-- **Scope:** Pydantic models and loaders in `dark_factory.config`. **Registry:** owner allowlist (GitHub logins), and per repo `full_name`, default plan gate (merge is always gated in MVP), test command, routing overrides. **Routing:** task type (`plan`, `implement`, `review`, `triage`, `ci_summary`, `commit_message`) → model ID plus vendor, with a version field. Research current OpenRouter models and prices, and propose the v1 table in the PR for owner approval. Add a CI test that loads and validates both files. Initial registry entry: the playground repo.
+- **Scope:** Pydantic models and loaders in `dark_factory.config`. **Registry:** owner allowlist (GitHub logins), and per repo `full_name`, default plan gate (merge is always gated in MVP), test command, routing overrides. **Routing:** task type (`plan`, `implement`, `review`, `triage`, `ci_summary`, `commit_message`) → model ID plus vendor, with a version field. Research current OpenRouter models and prices, and propose the v1 table in the PR for owner approval. Add a CI test that loads and validates both files. Initial registry entry: the playground repo. End the same-vendor review exception (D15): remove it from `docs/ai-workflow.md` and CLAUDE.md, and record the ending in M0.5's log entry.
 - **Acceptance:** invalid config fails CI with a clear message. The owner approves the model table.
 - **Depends on:** M0.1.
 
