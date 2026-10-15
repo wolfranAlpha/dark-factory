@@ -177,7 +177,7 @@ Every call records model, tokens and cost from OpenRouter usage data. A run stop
 
 ### 5.7 Stack
 
-Python 3.12, Temporal Python SDK (`temporalio`), Aider, Terraform, GitHub Actions, Docker. Lint and type checks (ruff, mypy) and tests (pytest, Temporal test environment with time skipping) on every PR.
+Python 3.14, Temporal Python SDK (`temporalio`), Aider, Terraform, GitHub Actions, Docker. Lint and type checks (ruff, mypy) and tests (pytest, Temporal test environment with time skipping) on every PR.
 
 ## 6. Development workflow
 
