@@ -77,7 +77,7 @@ Exit criteria (PRD §8): CI, Docker Compose with the Temporal dev server, GitHub
 
 ### M0.2 CI on GitHub Actions *(manual)*
 - **Value:** every PR is checked automatically.
-- **Scope:** `.github/workflows/ci.yml` on `pull_request` and push to `main`: the full check from M0.1. No secrets, and `permissions: contents: read`. Owner enables branch protection on `main` requiring the check.
+- **Scope:** `.github/workflows/ci.yml` on `pull_request` and push to `main`: the full check from M0.1. No secrets, and `permissions: contents: read`. Owner enables branch protection on `main` requiring the check, but not an approving review: GitHub does not let a PR author approve their own PR, and until M1.10 the owner authors every PR. From M1.10 the GitHub App bot authors factory PRs, so the owner can be requested as reviewer and approve them.
 - **Acceptance:** a PR shows the check. A failing lint blocks merge.
 - **Depends on:** M0.1.
 
