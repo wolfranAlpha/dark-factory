@@ -238,7 +238,7 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Failed / model mistakes:** the confirm-round case missed the rule, already present in the `blocking` case, that the implementer posts the owner's decisions (round 1, finding 2): the same kind of within-section inconsistency as on PR #23 and PR #25. The full check ran after the first commit, and after the round 1 fix commit, instead of before them. The first #29 edit left a broken sentence in plan M2 step 5, caught by reading the diff before committing. The first #29 budget rule counted every factory review, approvals included, against the 3-round budget, which conflicted with PRD §5.4 (caught in round 3)
 - **Routing changes:** none
 
-### Workflow change: PR-text-only findings are fix-now, not blocking (#30, PR #<pr>)
+### Workflow change: PR-text-only findings are fix-now, not blocking (#30, PR #31)
 
 - **Date:** pending
 - **Change:** the suggested reviewer prompt classes a problem confined to the PR title or body (a stale or wrong statement there that needs no file change) as `fix-now`, even when the statement is wrong; `blocking` keeps wrong statements in files, unmet acceptance criteria and broken invariants. Such a finding gives `PR title` or `PR body` as its location, and its patch's old text comes from there. Step 5 lists that location. Step 6 says that editing the PR title or body is not a commit and needs no new round, that an `approve` whose accepted `fix-now` findings only edit the PR title or body is ready with no confirm round, and that a confirm-round patch for such a finding must apply exactly to the PR title or body. Plan M2 step 5 is unchanged: it takes the classes from this prompt, and the orchestrator never acts on `class`
@@ -248,6 +248,6 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Review rounds:** pending
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** pending
-- **Failed / model mistakes:** pending
+- **Worked:** the issue named the places to check (prompt, step 6, plan M2 step 5), so the sweep before review was short. Measuring the prompt lines kept the code block within its 96-column width
+- **Failed / model mistakes:** the first `gh pr create` call failed because PowerShell split the inline body at its double quotes; a body file worked
 - **Routing changes:** none
