@@ -116,7 +116,7 @@ One entry per issue or Workflow change, appended at the end of the log in merge 
 
 - **Date:** YYYY-MM-DD (merge date, set in the last commit before merge)
 - **Implementer:** <agent>, <vendor> `<model>`
-- **Reviewer:** <vendor> `<model>`, [review](<link to the PR comment>). Verdict: <approve | changes | reject>
+- **Reviewer:** <vendor> `<model>`, [review](<link to the PR comment>). Verdict: <approve | changes | reject>, findings: <n> blocking, <n> fix-now, <n> follow-up
 - **Review rounds:** <n>
 - **Owner edits:** what the owner changed by hand, or "none"
 - **Cost and duration:** if known
