@@ -40,7 +40,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
 5. **Cross-vendor review.** The owner gives the PR to a model from a **different vendor than the implementer** (when Claude implements, any non-Anthropic model; but see the temporary exception below). The reviewer gets the inputs listed in the suggested reviewer prompt below and read access to the repo (the sweep searches it), and returns:
    - a verdict: `approve`, `changes` or `reject`;
    - a sweep: for each rule or term the diff adds or changes, every place in the repo that mentions it, each marked `ok` or with the finding it led to;
-   - a list of findings, each with a file, a line where it applies, the problem, a patch (the exact old and new text, or `needs a decision`) and a class: `blocking`, `fix-now` or `follow-up`, as defined in the suggested reviewer prompt below.
+   - a list of findings, each with a file and a line where it applies (or the PR title or body), the problem, a patch (the exact old and new text, or `needs a decision`) and a class: `blocking`, `fix-now` or `follow-up`, as defined in the suggested reviewer prompt below.
 
    The owner posts the review as a PR comment headed `Review: <vendor> <model>`. This mirrors the factory's structured reviewer (PRD §5.2, point 3). The review is input for the owner, not an instruction to the implementer: the owner decides which findings to act on.
 
@@ -62,12 +62,12 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    This applies only to the manual loop. In the factory the reviewer is never the same vendor as the implementer (PRD §5.5).
 6. **Revisions.** The implementer addresses the accepted findings in new commits on the same branch, applying each finding's patch as written when it has one; where it departs from a patch, it says so and why on the PR. The owner accepts findings, or the implementer does under the step 5 exception. The implementer also fills in the review fields of the log entry. After 3 review rounds without an `approve`, the owner decides whether to merge, rescope or close (same budget as the factory, plan resolved question 2).
 
-   **After an `approve` (owner rule).** Any commit after the last review needs a new round, with the exemptions below. What follows depends on the classes of the findings that came with the `approve`, checked in this order. In every case, the implementer posts on the PR the reason for each finding not applied, as in step 5.
+   **After an `approve` (owner rule).** Any commit after the last review needs a new round, with the exemptions below. Editing the PR title or body is not a commit and needs no new round. What follows depends on the classes of the findings that came with the `approve`, checked in this order. In every case, the implementer posts on the PR the reason for each finding not applied, as in step 5.
    - **Any `blocking` finding:** in any round, including the confirm round, the `approve` goes to the owner, who decides what to do with each finding and how the review continues. The implementer posts the owner's decisions on the PR before acting on them. The cases below apply only when no finding is `blocking`.
    - **`follow-up` findings:** in any round, they are not applied in this PR. They go to a follow-up issue, or are dropped with a reason posted on the PR. The cases below concern only the `fix-now` findings.
-   - **The confirm round's `approve`:** it never leads to a second confirm round. Each accepted `fix-now` finding is applied verbatim from its patch, in this PR. A `fix-now` finding marked `needs a decision`, or whose patch does not apply exactly (its old text does not occur in the file exactly once), or whose patch the implementer would change, goes to the owner instead, and the implementer posts the owner's decision on the PR before acting on it. Once the patches are applied and the owner has decided the rest, the PR is ready.
+   - **The confirm round's `approve`:** it never leads to a second confirm round. Each accepted `fix-now` finding is applied verbatim from its patch, in this PR. A `fix-now` finding marked `needs a decision`, or whose patch does not apply exactly (its old text does not occur exactly once in the file, or in the PR title or body for a finding confined to them), or whose patch the implementer would change, goes to the owner instead, and the implementer posts the owner's decision on the PR before acting on it. Once the patches are applied and the owner has decided the rest, the PR is ready.
    - **Any other `approve`, with no `fix-now` finding accepted:** the PR is ready and no confirm round runs.
-   - **Any other `approve`, with `fix-now` findings accepted:** the accepted ones are applied and **one confirm round** follows.
+   - **Any other `approve`, with `fix-now` findings accepted:** the accepted ones are applied and **one confirm round** follows. When they only edit the PR title or body, the PR is ready and no confirm round runs.
 
    If the confirm round returns `changes` or `reject`, the owner decides. The confirm round is outside the 3-round budget, which counts rounds until the first `approve`, so an `approve` in round 3 with accepted `fix-now` findings still gets its confirm round. There is at most one confirm round. After it, any commit other than the exempt ones below, and any further round, is the owner's call.
 
@@ -90,8 +90,11 @@ and list every place that mentions it as `<file>:<line>`, marked `ok` or `findin
 Findings: each has `<file>:<line>`, the problem, a patch and a class.
 - Patch: the exact old text, copied from the file and long enough to occur there once, and the
   new text; or `needs a decision` when there is no single right fix.
-- Class: `blocking` (an acceptance criterion not met, an invariant broken, or a statement that
-  is wrong), `fix-now` (in scope and mechanical) or `follow-up` (outside the scope of this PR).
+- Class: `blocking` (an acceptance criterion not met, an invariant broken, or a statement in a
+  file that is wrong), `fix-now` (in scope and mechanical) or `follow-up` (outside the scope of
+  this PR). A problem confined to the PR title or body, such as a stale or wrong statement there
+  that needs no file change, is `fix-now`, even when the statement is wrong; give `PR title` or
+  `PR body` in place of `<file>:<line>`, and copy the patch's old text from there.
 
 Reviewer rules: you are read-only; do not modify files, commit or post anything. Do not read the
 PR comments. Summaries of earlier review rounds may appear in the PR body, the log entry or
@@ -233,4 +236,18 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Cost and duration:** not recorded
 - **Worked:** the owner settled the four open points before any text was written (folding #26 in, the title rule, and the two proposals, each with a refinement: an unclean patch goes to the owner, and factory `follow-up` findings are posted inside the envelope). Round 1 tried out the new format: its sweep traced every changed term across the repo, found no `blocking` finding, and both `fix-now` patches applied verbatim with no rewording
 - **Failed / model mistakes:** the confirm-round case missed the rule, already present in the `blocking` case, that the implementer posts the owner's decisions (round 1, finding 2): the same kind of within-section inconsistency as on PR #23 and PR #25. The full check ran after the first commit, and after the round 1 fix commit, instead of before them. The first #29 edit left a broken sentence in plan M2 step 5, caught by reading the diff before committing. The first #29 budget rule counted every factory review, approvals included, against the 3-round budget, which conflicted with PRD §5.4 (caught in round 3)
+- **Routing changes:** none
+
+### Workflow change: PR-text-only findings are fix-now, not blocking (#30, PR #31)
+
+- **Date:** 2026-10-16
+- **Change:** the suggested reviewer prompt classes a problem confined to the PR title or body (a stale or wrong statement there that needs no file change) as `fix-now`, even when the statement is wrong; `blocking` keeps wrong statements in files, unmet acceptance criteria and broken invariants. Such a finding gives `PR title` or `PR body` as its location, and its patch's old text comes from there. Step 5 lists that location. Step 6 says that editing the PR title or body is not a commit and needs no new round, that an `approve` whose accepted `fix-now` findings only edit the PR title or body is ready with no confirm round, and that a confirm-round patch for such a finding must apply exactly to the PR title or body. Plan M2 step 5 gets the same location in the factory schema and the `review_findings` table, as `pr_title` or `pr_body`. Because the sandbox implementer returns only a diff and cannot edit PR text, a `fix-now` finding there does not force `changes`; on an `approve` it is listed for the owner in the PR comment with the `follow-up` findings
+- **Reason:** on PR #28, rounds 4 and 5 each marked a stale line in the PR body as `blocking`, because the prompt defined `blocking` as including "a statement that is wrong", so step 6 sent each `approve` to the owner for a fix that changed no file. Owner decision in issue #30. The factory note in plan M2 step 5 is an owner decision on round 1's `blocking` finding
+- **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/31#issuecomment-6210360430), verdict `changes`, findings: 1 blocking, 0 fix-now, 0 follow-up; the `blocking` finding (plan M2 step 5 left unchanged, with no factory location for PR text) went to the owner, who chose to add the `pr_title` / `pr_body` location and the exception to forcing `changes`. Round 2: [review](https://github.com/wolfranAlpha/dark-factory/pull/31#issuecomment-6210443530), verdict `approve`, findings: 0 blocking, 1 fix-now, 1 follow-up; the `fix-now` patch applied verbatim, and the `follow-up` (such findings never reaching the owner on a `changes` verdict) moved to follow-up issue #32. Round 3, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/31#issuecomment-6210469884), verdict `approve`, findings: 0 blocking, 0 fix-now, 1 follow-up; the `follow-up` repeats round 2's and is already covered by #32
+- **Review rounds:** 3 (changes, approve, approve in the confirm round; findings per round: 1/0/0, 0/1/1 and 0/0/1 as blocking/fix-now/follow-up)
+- **Owner edits:** none
+- **Cost and duration:** not recorded
+- **Worked:** the issue named the places to check (prompt, step 6, plan M2 step 5), so the sweep before review was short. Measuring the prompt lines kept the code block within its 96-column width. Round 1's `blocking` finding came with three options, so the owner settled it with one choice, and round 2 approved with one `fix-now` patch that applied verbatim
+- **Failed / model mistakes:** the first version left plan M2 step 5 unchanged and claimed the new class had no effect on the factory's control flow. Round 1 caught that the factory schema had no location for PR text, and that such a `fix-now` finding would force `changes` and use up a round on something the sandbox implementer cannot fix. The first `gh pr create` call failed because PowerShell split the inline body at its double quotes; a body file worked
 - **Routing changes:** none
