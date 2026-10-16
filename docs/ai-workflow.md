@@ -248,6 +248,6 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Review rounds:** pending
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** the issue named the places to check (prompt, step 6, plan M2 step 5), so the sweep before review was short. Measuring the prompt lines kept the code block within its 96-column width
+- **Worked:** the issue named the places to check (prompt, step 6, plan M2 step 5), so the sweep before review was short. Measuring the prompt lines kept the code block within its 96-column width. Round 1's `blocking` finding came with three options, so the owner settled it with one choice, and round 2 approved with one `fix-now` patch that applied verbatim
 - **Failed / model mistakes:** the first version left plan M2 step 5 unchanged and claimed the new class had no effect on the factory's control flow. Round 1 caught that the factory schema had no location for PR text, and that such a `fix-now` finding would force `changes` and use up a round on something the sandbox implementer cannot fix. The first `gh pr create` call failed because PowerShell split the inline body at its double quotes; a body file worked
 - **Routing changes:** none
