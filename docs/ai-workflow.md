@@ -251,3 +251,15 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Worked:** the issue named the places to check (prompt, step 6, plan M2 step 5), so the sweep before review was short. Measuring the prompt lines kept the code block within its 96-column width. Round 1's `blocking` finding came with three options, so the owner settled it with one choice, and round 2 approved with one `fix-now` patch that applied verbatim
 - **Failed / model mistakes:** the first version left plan M2 step 5 unchanged and claimed the new class had no effect on the factory's control flow. Round 1 caught that the factory schema had no location for PR text, and that such a `fix-now` finding would force `changes` and use up a round on something the sandbox implementer cannot fix. The first `gh pr create` call failed because PowerShell split the inline body at its double quotes; a body file worked
 - **Routing changes:** none
+
+### docs: factory PR-text findings reach the owner on every verdict (#32, PR #33)
+
+- **Date:** 2026-10-16
+- **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/33#issuecomment-6210834708), verdict `approve`, findings: 0 blocking, 1 fix-now, 1 follow-up; the `fix-now` patch applied verbatim, and the `follow-up` (the CLAUDE.md and PRD invariant wording, the owner's to decide) moved to follow-up issue #34. Round 2, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/33#issuecomment-6210863778), verdict `approve`, findings: 0 blocking, 0 fix-now, 1 follow-up; the `follow-up` repeats round 1's and is already covered by #34
+- **Review rounds:** 2 (approve, approve in the confirm round; findings per round: 0/1/1 and 0/0/1 as blocking/fix-now/follow-up)
+- **Owner edits:** none
+- **Cost and duration:** not recorded
+- **Worked:** the owner settled the two open questions (factory only; its own PR after #31) before any text was written. Keeping `pr_text_findings` as a separate list let the owner comment be posted as returned, so the orchestrator still reads only the verdict. Round 1, the first review under the new PR-text class, approved with one `fix-now` patch that applied verbatim
+- **Failed / model mistakes:** the first text said the orchestrator posts the owner lists "without reading or filtering them", which overstated the rule, since it must check whether the list is empty (round 1, finding 1)
+- **Routing changes:** none
