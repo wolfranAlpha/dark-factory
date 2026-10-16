@@ -65,7 +65,7 @@ issue → coding agent on a branch → PR → CI → cross-vendor review* → re
    **After an `approve` (owner rule).** Any commit after the last review needs a new round, with the exemptions below. What follows depends on the classes of the findings that came with the `approve`, checked in this order. In every case, the implementer posts on the PR the reason for each finding not applied, as in step 5.
    - **Any `blocking` finding:** in any round, including the confirm round, the `approve` goes to the owner, who decides what to do with each finding and how the review continues. The implementer posts the owner's decisions on the PR before acting on them. The cases below apply only when no finding is `blocking`.
    - **`follow-up` findings:** in any round, they are not applied in this PR. They go to a follow-up issue, or are dropped with a reason posted on the PR. The cases below concern only the `fix-now` findings.
-   - **The confirm round's `approve`:** it never leads to a second confirm round. Each accepted `fix-now` finding is applied verbatim from its patch, in this PR. A `fix-now` finding marked `needs a decision`, or whose patch does not apply exactly (its old text does not occur in the file exactly once), or whose patch the implementer would change, goes to the owner instead. Once the patches are applied and the owner has decided the rest, the PR is ready.
+   - **The confirm round's `approve`:** it never leads to a second confirm round. Each accepted `fix-now` finding is applied verbatim from its patch, in this PR. A `fix-now` finding marked `needs a decision`, or whose patch does not apply exactly (its old text does not occur in the file exactly once), or whose patch the implementer would change, goes to the owner instead, and the implementer posts the owner's decision on the PR before acting on it. Once the patches are applied and the owner has decided the rest, the PR is ready.
    - **Any other `approve`, with no `fix-now` finding accepted:** the PR is ready and no confirm round runs.
    - **Any other `approve`, with `fix-now` findings accepted:** the accepted ones are applied and **one confirm round** follows.
 
@@ -127,7 +127,7 @@ One entry per issue or Workflow change, appended at the end of the log in merge 
 
 An issue with no plan step drops the step from the heading: `### <title> (#<issue>, PR #<pr>)`.
 
-With several review rounds, list each round's review link, its verdict and the number of findings in each class. The final values go in with the bookkeeping commit (step 6), after the last review.
+Each verdict comes with the number of findings in each class. With several review rounds, list each round's review link, its verdict and those counts. The final values go in with the bookkeeping commit (step 6), after the last review.
 
 Under the temporary exception in step 5, and only then, the Reviewer line also carries the marker `[same-vendor, fresh session]` after the model.
 
@@ -231,6 +231,6 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Review rounds:** pending
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** pending
-- **Failed / model mistakes:** pending
+- **Worked:** the owner settled the four open points before any text was written (folding #26 in, the title rule, and the two proposals, each with a refinement: an unclean patch goes to the owner, and factory `follow-up` findings are posted inside the envelope). Round 1 tried out the new format: its sweep traced every changed term across the repo, found no `blocking` finding, and both `fix-now` patches applied verbatim with no rewording
+- **Failed / model mistakes:** the confirm-round case missed the rule, already present in the `blocking` case, that the implementer posts the owner's decisions (round 1, finding 2): the same kind of within-section inconsistency as on PR #23 and PR #25. The full check ran after the first commit instead of before it
 - **Routing changes:** none
