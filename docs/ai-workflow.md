@@ -260,6 +260,6 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Review rounds:** pending
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** the owner settled the two open questions (factory only; its own PR after #31) before any text was written. Keeping `pr_text_findings` as a separate list let the owner comment be posted as returned, so the orchestrator still reads only the verdict
-- **Failed / model mistakes:** none before review
+- **Worked:** the owner settled the two open questions (factory only; its own PR after #31) before any text was written. Keeping `pr_text_findings` as a separate list let the owner comment be posted as returned, so the orchestrator still reads only the verdict. Round 1, the first review under the new PR-text class, approved with one `fix-now` patch that applied verbatim
+- **Failed / model mistakes:** the first text said the orchestrator posts the owner lists "without reading or filtering them", which overstated the rule, since it must check whether the list is empty (round 1, finding 1)
 - **Routing changes:** none
