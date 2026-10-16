@@ -223,12 +223,12 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 
 ### Workflow change: reviewer sweep, exact patches and fix classes (#27, #26, PR #28)
 
-- **Date:** pending
+- **Date:** 2026-10-16
 - **Change:** the suggested reviewer prompt asks for a Sweep section (every place in the repo that mentions a rule or term the diff adds or changes) and gives each finding a patch (exact old and new text, or `needs a decision`) and a class (`blocking`, `fix-now` or `follow-up`), replacing the `(minor)` marker. Step 6 states the after-`approve` cases in terms of the classes: a confirm round's accepted `fix-now` findings are applied verbatim from their patch in the same PR, with no further round, and a patch that does not apply exactly goes to the owner; such a commit joins bookkeeping as an exemption. Every implementer applies patches as written and says where it departs from one. Plan M2 step 5 gets the same fields in the factory reviewer's schema, with the orchestrator still reading only the verdict. From #26: step 6 says how the cases apply to the confirm round's `approve` and that the implementer posts the owner's decisions; step 2 no longer assumes a plan step; issues with no plan step get a Conventional Commit style title
 - **Reason:** on PR #25, three findings across rounds 1, 3 and 4 concerned text that already existed in round 1, and fixes written in the implementer's own words caused new findings. Owner decisions: fold #26 into this change, add the title rule, accept the verbatim-patch rule with unclean patches going to the owner, and list the factory's `follow-up` findings in a PR comment inside the envelope
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** pending
-- **Review rounds:** pending
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/28#issuecomment-6209584856), verdict `approve`, findings: 0 blocking, 2 fix-now, 3 follow-up; both `fix-now` patches applied verbatim, findings 3 and 4 moved to follow-up issue #29, and finding 5 (the implementer's local memory) handled after merge. Round 2, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/28#issuecomment-6209618869), verdict `approve`, findings: 0 blocking, 1 fix-now, 2 follow-up; the `fix-now` patch applied verbatim with no further round under the new step 6 rule, and both `follow-up` findings moved to #29
+- **Review rounds:** 2 (approve, then approve in the confirm round)
 - **Owner edits:** none
 - **Cost and duration:** not recorded
 - **Worked:** the owner settled the four open points before any text was written (folding #26 in, the title rule, and the two proposals, each with a refinement: an unclean patch goes to the owner, and factory `follow-up` findings are posted inside the envelope). Round 1 tried out the new format: its sweep traced every changed term across the repo, found no `blocking` finding, and both `fix-now` patches applied verbatim with no rewording
