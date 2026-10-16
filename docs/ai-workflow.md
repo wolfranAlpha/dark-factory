@@ -254,10 +254,10 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 
 ### docs: factory PR-text findings reach the owner on every verdict (#32, PR #33)
 
-- **Date:** pending
+- **Date:** 2026-10-16
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
-- **Reviewer:** pending
-- **Review rounds:** pending
+- **Reviewer:** Anthropic `claude-opus-5-5` [same-vendor, fresh session]. Round 1: [review](https://github.com/wolfranAlpha/dark-factory/pull/33#issuecomment-6210834708), verdict `approve`, findings: 0 blocking, 1 fix-now, 1 follow-up; the `fix-now` patch applied verbatim, and the `follow-up` (the CLAUDE.md and PRD invariant wording, the owner's to decide) moved to follow-up issue #34. Round 2, the confirm round: [review](https://github.com/wolfranAlpha/dark-factory/pull/33#issuecomment-6210863778), verdict `approve`, findings: 0 blocking, 0 fix-now, 1 follow-up; the `follow-up` repeats round 1's and is already covered by #34
+- **Review rounds:** 2 (approve, approve in the confirm round; findings per round: 0/1/1 and 0/0/1 as blocking/fix-now/follow-up)
 - **Owner edits:** none
 - **Cost and duration:** not recorded
 - **Worked:** the owner settled the two open questions (factory only; its own PR after #31) before any text was written. Keeping `pr_text_findings` as a separate list let the owner comment be posted as returned, so the orchestrator still reads only the verdict. Round 1, the first review under the new PR-text class, approved with one `fix-now` patch that applied verbatim
