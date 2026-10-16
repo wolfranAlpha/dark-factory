@@ -252,7 +252,7 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Failed / model mistakes:** the first version left plan M2 step 5 unchanged and claimed the new class had no effect on the factory's control flow. Round 1 caught that the factory schema had no location for PR text, and that such a `fix-now` finding would force `changes` and use up a round on something the sandbox implementer cannot fix. The first `gh pr create` call failed because PowerShell split the inline body at its double quotes; a body file worked
 - **Routing changes:** none
 
-### docs: factory PR-text findings reach the owner on every verdict (#32, PR #<pr>)
+### docs: factory PR-text findings reach the owner on every verdict (#32, PR #33)
 
 - **Date:** pending
 - **Implementer:** Claude Code, Anthropic `claude-opus-5-5`
@@ -260,6 +260,6 @@ Entries marked *backfilled* were written after the fact, from the PRs and git hi
 - **Review rounds:** pending
 - **Owner edits:** none
 - **Cost and duration:** not recorded
-- **Worked:** pending
-- **Failed / model mistakes:** pending
+- **Worked:** the owner settled the two open questions (factory only; its own PR after #31) before any text was written. Keeping `pr_text_findings` as a separate list let the owner comment be posted as returned, so the orchestrator still reads only the verdict
+- **Failed / model mistakes:** none before review
 - **Routing changes:** none
